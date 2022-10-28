@@ -35,8 +35,6 @@ namespace WindowsFormsApp1
             user = new User() { name = "nguyễn văn bản", address = "hội an" };
             list.Add(user);
 
-
-
         }
 
 
@@ -57,6 +55,7 @@ namespace WindowsFormsApp1
                 }
             }
         }
+        // import excel
         private void importExcel(string path)
         {
             using (ExcelPackage excelPackage = new ExcelPackage(new FileInfo(path)))
@@ -79,7 +78,7 @@ namespace WindowsFormsApp1
                 dataGridView1.DataSource = dataTable;
             }
         }
-
+        //exportexcel
         private void exportExel(string path)
         {
             Excel.Application application = new Excel.Application();
@@ -98,9 +97,8 @@ namespace WindowsFormsApp1
             application.Columns.AutoFit();
             application.ActiveWorkbook.SaveCopyAs(path);
             application.ActiveWorkbook.Saved = true;
-
         }
-
+        // work with excel
         private void import_Click(object sender, EventArgs e)
         {
             OpenFileDialog OpenFileDialog = new OpenFileDialog();
@@ -118,6 +116,7 @@ namespace WindowsFormsApp1
                 }
             }
         }
+        // export into mysql
         private void ExportMysql()
         {
             MySqlConnection connection = DBUtils.GetDBConnection();
@@ -159,13 +158,9 @@ namespace WindowsFormsApp1
                 connection.Dispose();
                 connection = null;
             }
-
-
             Console.Read();
-
         }
-
-
+        // nút để export excel
         private void button1_Click(object sender, EventArgs e)
         {
             ExportMysql();
@@ -183,12 +178,15 @@ namespace WindowsFormsApp1
 
         private void button2_Click(object sender, EventArgs e)
         {
+            button2.TabStop = false;
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.FlatAppearance.BorderSize = 0;
+            button2.FlatAppearance.BorderColor = Color.FromArgb(0, 255, 255, 255); //transparent
             if (!serialPort1.IsOpen) // Nếu đối tượng serialPort1 chưa được mở , sau khi nhấn button 1 thỳ…
             {
                 serialPort1.PortName = "COM4";//cổng serialPort1 = ComboBox mà bạn đang chọn
                 serialPort1.Open();// Mở cổng serialPort1
                 Console.WriteLine("ta đã vô đây rồi nghe mở kết nối");
-
             }
         }
 
@@ -207,9 +205,7 @@ namespace WindowsFormsApp1
             {
                 String y = "long1";
                 serialPort1.Write(y);//Nếu button2 được nhấn,gửi byte “1” đến cổng serialPort1
-
             }
-
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -218,9 +214,7 @@ namespace WindowsFormsApp1
             {
                 String x = "long2";
                 serialPort1.Write(x);//gửi byte “0” đến cổng serialPort1
-
             }
-
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -243,39 +237,52 @@ namespace WindowsFormsApp1
                 label3.Text = ("Ðã kết nối");
                 label3.ForeColor = Color.Green;
                 //Nếu Timer được làm mới, Cổng serialPort1 đã mở thì thay đổi Text trong button1, label3…đổi màu text label3 thành màu xanh
-
             }
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
-
-
-
         private void button6_Click(object sender, EventArgs e)
         {
-           
         }
 
         private void ledvang_Click(object sender, EventArgs e)
         {
-
         }
+        String name;
+        String value;
+        int time;
+        int data;
+   
         private void Form1_Load_1(object sender, EventArgs e)
         {
             dt.Columns.Add("TenSV");
             dt.Columns.Add("MASV");
             // Khởi tạo ZedGraph
             GraphPane myPane = zedGraphControl1.GraphPane;
+           
+            myPane.Fill.Color = System.Drawing.Color.FromArgb(38, 39, 59);
+            myPane.Chart.Fill = new Fill(Color.FromArgb(38, 39, 59));
+            myPane.XAxis.Title.FontSpec.FontColor = Color.DeepSkyBlue;
+            
+            //myPane.XAxis.MajorGrid.IsVisible = true;
+            myPane.YAxis.Title.FontSpec.FontColor = Color.DeepSkyBlue;
+            myPane.XAxis.Scale.FontSpec.FontColor = Color.DeepSkyBlue;
+            myPane.YAxis.Scale.FontSpec.FontColor = Color.DeepSkyBlue;
+            //myPane.YAxis.MajorGrid.IsVisible = true;
+            //myPane.Chart.Fill.Color = SystemColors.ControlText;
+            // This will do the area outside of the graphing area
+            //myPane.Fill = new Fill(Color.FromArgb(222, 224, 212));
+            // This will do the area inside the graphing area
+            //myPane.Chart.Fill = new Fill(Color.FromArgb(222, 224, 212));
             myPane.Title.Text = "Đồ thị dữ liệu theo thời gian";
             myPane.XAxis.Title.Text = "Thời gian (s)";
+            
             myPane.YAxis.Title.Text = "Dữ liệu";
-
             RollingPointPairList list = new RollingPointPairList(60000);
             LineItem curve = myPane.AddCurve("Dữ liệu", list, Color.Red, SymbolType.None);
-
+            curve.Symbol.Fill = new Fill(Color.White);
             myPane.XAxis.Scale.Min = 0;
             myPane.XAxis.Scale.Max = 30;
             myPane.XAxis.Scale.MinorStep = 1;
@@ -284,17 +291,13 @@ namespace WindowsFormsApp1
             myPane.YAxis.Scale.Max = 100;
             try
             {
-
                 //string[] arrList = new List<string>();
                 string[] arrList = new string[5];
                 arrList = serialPort1.ReadLine().Split('|'); // Đọc một dòng của Serial, cắt chuỗi khi gặp ký tự gạch đứng
-
                 String name;
                 String value;
                 name = arrList[0]; // Chuỗi đầu tiên lưu vào SRealTime
                 value = arrList[1]; // Chuỗi thứ hai lưu vào SDatas
-
-             
             }
             catch
             {
@@ -308,30 +311,18 @@ namespace WindowsFormsApp1
         {
             if (lo == 1)
             {
-                
                 Draw();
                 button12_Click(sender, e);
                 //ExportMysql();
                 lo = 0;
                 //Console.WriteLine("ta đã vô đây rồi nghe, trong vòng lặp timer");
             }
-            
-            
-        }
-        String name;
-        String value;
-
-        int time;
-        int data ;
+                   }
+       
         private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            
-
             if (serialPort1.IsOpen == true)
             {
-                Console.WriteLine("ta đã vô đây rồi nghe datareceived");
-                
-                //Console.WriteLine("received y");
                 try
                 {
                     
@@ -395,11 +386,8 @@ namespace WindowsFormsApp1
 
             }
         }
-        DataTable dt = new DataTable();
-        
-        
-        
-        
+        DataTable dt = new DataTable();       
+               
         private void button12_Click(object sender, EventArgs e)
         {
             if (t == 1) { 
@@ -433,6 +421,7 @@ namespace WindowsFormsApp1
               
            
             Scale xScale = zedGraphControl1.GraphPane.XAxis.Scale;
+            
             Scale yScale = zedGraphControl1.GraphPane.YAxis.Scale;
 
             // Tự động Scale theo trục x
@@ -503,6 +492,11 @@ namespace WindowsFormsApp1
             {
                 dataGridView1.Rows.RemoveAt(item.Index);
             }
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
